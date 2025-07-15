@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NovTechsSA - Web & Software Development</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-bg {
+            background-color: #f3e8ff; /* Light purple */
+        }
+        .primary-color {
+            color: #8b5cf6; /* Purple */
+        }
+        .primary-bg {
+            background-color: #8b5cf6; /* Purple */
+        }
+        .secondary-color {
+            color: #6d28d9; /* Deeper Purple */
+        }
+        .secondary-bg {
+            background-color: #6d28d9; /* Deeper Purple */
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #8b5cf6, #6d28d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Slider specific styles */
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* shadow-xl */
+            /* Ensure full width */
+            width: 100%; 
+        }
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slider-item {
+            min-width: 100%;
+            box-sizing: border-box;
+            position: relative; /* For overlay text positioning */
+        }
+        .slider-item img {
+            width: 100%;
+            height: 500px; /* Fixed height for consistency, adjust as needed */
+            object-fit: cover; /* Ensures images cover the area without distortion */
+            border-radius: 1rem; /* rounded-xl */
+        }
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(139, 92, 246, 0.7); /* purple-600 with transparency */
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 9999px; /* full rounded */
+            cursor: pointer;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem; /* Larger arrows */
+            line-height: 1; /* Remove extra line height */
+        }
+        .slider-button:hover {
+            background-color: rgba(109, 40, 217, 0.8); /* deeper purple hover */
+        }
+        .slider-button.left {
+            left: 1rem;
+        }
+        .slider-button.right {
+            right: 1rem;
+        }
+        .slider-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        .slider-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, width 0.3s ease, height 0.3s ease;
+        }
+        .slider-dot.active {
+            background-color: #8b5cf6; /* purple-600 */
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .slider-item img {
+                height: 300px; /* Smaller height for mobile */
+            }
+            .slider-button {
+                padding: 0.5rem 0.75rem; /* Smaller buttons */
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold gradient-text">NovTechSA</a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-600 hover:text-purple-600">Home</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600">About Us</a>
+                <a href="#services" class="text-gray-600 hover:text-purple-600">Services</a>
+                <a href="#" class="text-gray-600 hover:text-purple-600">Packages</a>
+            </div>
+            <a href="#" class="hidden md:block bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition duration-300">Contact Us</a>
+            <button id="mobile-menu-button" class="md:hidden flex items-center">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="index.html" class="block py-2 px-4 text-sm text-gray-600 hover:bg-purple-100">Home</a>
+            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-purple-100">About Us</a>
+            <a href="#services" class="block py-2 px-4 text-sm text-gray-600 hover:bg-purple-100">Services</a>
+            <a href="#" class="block py-2 px-4 text-sm text-gray-600 hover:bg-purple-100">Packages</a>
+            <a href="#" class="block py-2 px-4 text-sm text-white bg-purple-600 hover:bg-purple-700">Contact Us</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main>
+        <section class="hero-bg">
+            <div class="container mx-auto px-6 py-24 md:py-32 flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 lg:w-2/5 text-center md:text-left">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 leading-tight">
+                        Building <span class="gradient-text">Digital Solutions</span> That Drive Growth
+                    </h1>
+                    <p class="mt-6 text-lg text-gray-600">
+                        From custom software to stunning websites and mobile apps, Novetchsa brings your vision to life with cutting-edge technology and creative design.
+                    </p>
+                    <div class="mt-8">
+                        <a href="#services" class="bg-purple-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-purple-700 transition duration-300">Explore Our Services</a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 lg:w-3/5 mt-12 md:mt-0 flex justify-center">
+                    <img src="./images/development.jpg" alt="Digital Solutions Illustration" class="rounded-lg shadow-2xl">
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-800">Our Services</h2>
+                    <p class="text-lg text-gray-600 mt-4">We offer a comprehensive suite of services to build your digital presence.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                    
+                    <!-- Custom Software Development -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
+                           <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Custom Software Development</h3>
+                        <p class="text-gray-600">We build scalable and robust custom software solutions tailored to your specific business needs, improving efficiency and driving innovation.</p>
+                    </div>
+
+                    <!-- Web Development -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Web Development</h3>
+                        <p class="text-gray-600">Our web development team creates responsive, high-performance websites that provide an exceptional user experience and convert visitors into customers.</p>
+                    </div>
+
+                    <!-- Mobile Apps -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
+                            <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Mobile Apps</h3>
+                        <p class="text-gray-600">We design and develop intuitive and engaging mobile applications for both iOS and Android, connecting you with your users on the go.</p>
+                    </div>
+
+                    <!-- Graphic Design -->
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mb-6">
+                           <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Graphic Design</h3>
+                        <p class="text-gray-600">Our creative team produces stunning visuals, from logos and branding to UI/UX design, ensuring your brand stands out in a crowded market.</p>
+                    </div>
+                    
+                    <!-- Spec and Quote -->
+                    <div class="bg-purple-50 p-8 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 md:col-span-2 lg:col-span-3">
+                         <div class="flex flex-col md:flex-row items-center">
+                            <div class="flex-shrink-0 mb-6 md:mb-0 md:mr-8">
+                                <div class="flex items-center justify-center h-24 w-24 rounded-full bg-purple-200">
+                                    <svg class="w-12 h-12 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-purple-800 mb-3">Spec and Quote Your Project</h3>
+                                <p class="text-gray-700">Once we understand exactly what you require for your new software project, we will provide you with a software development proposal. This will lay out the different aspects of the software product as well as the costing and timelines. When you are happy with the proposal, we will proceed to the next exciting step!</p>
+                                <a href="#" class="inline-block mt-4 bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-700 transition duration-300">Get a Free Quote</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+      <!-- Why Choose Us Section -->
+      <section class="bg-gray-50 py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800">Why Choose <span class="gradient-text">NovTechSA?</span></h2>
+                <p class="text-lg text-gray-600 mt-4">We're more than just developers; we're your partners in innovation.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Feature 1: Agile Process -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Dynamic Agile Process</h3>
+                    <p class="text-gray-600">Our flexible, agile approach ensures your project can scale and adapt, delivering iterative results and incorporating feedback seamlessly.</p>
+                </div>
+
+                <!-- Feature 2: Proven Expertise -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Proven Expertise</h3>
+                    <p class="text-gray-600">Since 2023, our seasoned team has been transforming ideas into market-ready solutions with deep industry knowledge and skill.</p>
+                </div>
+
+                <!-- Feature 3: User-Centric Design -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">User-Centric Design</h3>
+                    <p class="text-gray-600">We create beautiful, functional, and intuitive user interfaces (UI/UX) that provide a joyful experience for your audience.</p>
+                </div>
+
+                <!-- Feature 4: Ongoing Support -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Ongoing Support</h3>
+                    <p class="text-gray-600">Our partnership extends beyond launch with dedicated support to keep your platform secure, updated, and running smoothly.</p>
+                </div>
+
+                <!-- Feature 5: Transparent Collaboration -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Transparent Collaboration</h3>
+                    <p class="text-gray-600">We build relationships on trust, with regular progress updates to ensure we stay aligned with your vision and schedule.</p>
+                </div>
+
+                <!-- Feature 6: Seamless Deployment -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Seamless Deployment</h3>
+                    <p class="text-gray-600">We manage the entire deployment process, ensuring your mobile app has a smooth and successful launch on all major app stores.</p>
+                </div>
+
+                <!-- Feature 7: Rigorous Quality Assurance -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Rigorous Quality Assurance</h3>
+                    <p class="text-gray-600">Quality is integral to our process. We conduct meticulous testing throughout development to deliver a polished, bug-free product.</p>
+                </div>
+
+                <!-- Feature 8: Focused Development Teams -->
+                <div class="text-center p-6">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-100 mx-auto mb-4">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Focused Development Teams</h3>
+                    <p class="text-gray-600">We assign dedicated teams to your project, ensuring streamlined communication and efficient end-to-end delivery.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>  
+
+    <!-- Services Slider Section -->
+    <section class="py-20 bg-gradient-to-r from-purple-50 to-purple-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800">Our Work in Action</h2>
+                <p class="text-lg text-gray-600 mt-4">Explore some examples of our diverse digital solutions.</p>
+            </div>
+            <!-- Removed max-w-4xl mx-auto to make it full width within the container -->
+            <div class="slider-container rounded-xl shadow-xl"> 
+                <div class="slider-wrapper" id="slider-wrapper">
+                    <div class="slider-item">
+                        <img src="./images/code.p.avif" alt="Custom Software Development" class="w-full h-96 object-cover rounded-xl">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 text-white rounded-b-xl">
+                            <h3 class="text-2xl font-bold">Intuitive Business Dashboards</h3>
+                            <p class="mt-2 text-gray-300">Custom software designed for data visualization and streamlined operations.</p>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <img src="./images/ecommerce.jpeg" alt="Web Development Project" class="w-full h-96 object-cover rounded-xl">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 text-white rounded-b-xl">
+                            <h3 class="text-2xl font-bold">Responsive E-commerce Platform</h3>
+                            <p class="mt-2 text-gray-300">Engaging web design with seamless user experience across all devices.</p>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <img src="./images/apps.jpeg" alt="Mobile App Design" class="w-full h-96 object-cover rounded-xl">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 text-white rounded-b-xl">
+                            <h3 class="text-2xl font-bold">Cross-Platform Mobile Application</h3>
+                            <p class="mt-2 text-gray-300">Connecting businesses with their customers on iOS and Android.</p>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <img src="./images/pencil.avif" alt="Graphic Design Portfolio" class="w-full h-96 object-cover rounded-xl">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 text-white rounded-b-xl">
+                            <h3 class="text-2xl font-bold">Vibrant Brand Identity Design</h3>
+                            <p class="mt-2 text-gray-300">Captivating visuals that elevate brand recognition and appeal.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="slider-button left" id="prev-slide">&#10094;</button>
+                <button class="slider-button right" id="next-slide">&#10095;</button>
+                <div class="slider-dots" id="slider-dots"></div>
+            </div>
+        </div>
+    </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-6 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">NovTechSA</h3>
+                    <p class="text-gray-400">Innovative solutions for a digital world.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul>
+                        <li class="mb-2"><a href="#" class="hover:text-purple-400">About Us</a></li>
+                        <li class="mb-2"><a href="#services" class="hover:text-purple-400">Services</a></li>
+                        <li class="mb-2"><a href="#" class="hover:text-purple-400">Packages</a></li>
+                        <li class="mb-2"><a href="#" class="hover:text-purple-400">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Us</h4>
+                    <p class="text-gray-400">+27 72 375 3628</p>
+                    <p class="text-gray-400">novstechsa@gmail.com</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.465c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8a3 3 0 110-6 3 3 0 010 6zm6.406-11.845a1.25 1.25 0 100 2.5 1.25 1.25 0 000-2.5z" clip-rule="evenodd" /></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.028-.967-.271-.099-.469-.148-.668.15-.198.297-.767.967-.94 1.166-.173.198-.347.223-.644.075-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.447-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.668-1.611-.915-2.207-.242-.579-.487-.5-.668-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.075-.792.372-.271.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.099 3.205 5.077 4.377.711.306 1.263.489 1.694.626.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.271-.198-.568-.347z"/><path d="M12.004 2.003c-5.523 0-9.997 4.474-9.997 9.997 0 1.762.463 3.484 1.342 4.997l-1.447 5.289 5.426-1.428c1.477.808 3.13 1.239 4.676 1.239 5.523 0 9.997-4.474 9.997-9.997s-4.474-9.997-9.997-9.997zm0 18.181c-1.419 0-2.803-.377-4.012-1.089l-.287-.169-3.221.847.862-3.146-.187-.308c-.83-1.366-1.27-2.936-1.27-4.547 0-4.411 3.587-7.998 7.998-7.998s7.998 3.587 7.998 7.998-3.587 7.998-7.998 7.998z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; <span id="current-year">2025</span> NovTechSA. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Slider functionality
+        const sliderWrapper = document.getElementById('slider-wrapper');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        const sliderDotsContainer = document.getElementById('slider-dots');
+        const sliderItems = document.querySelectorAll('.slider-item');
+        let currentIndex = 0;
+
+        function updateSlider() {
+            sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+            updateDots();
+        }
+
+        function updateDots() {
+            sliderDotsContainer.innerHTML = '';
+            sliderItems.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('slider-dot');
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                }
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateSlider();
+                });
+                sliderDotsContainer.appendChild(dot);
+            });
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % sliderItems.length;
+            updateSlider();
+        });
+
+        prevButton.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + sliderItems.length) % sliderItems.length;
+            updateSlider();
+        });
+
+        // Initialize slider
+        updateSlider();
+
+        // Optional: Auto-slide
+        let autoSlideInterval = setInterval(() => {
+            currentIndex = (currentIndex + 1) % sliderItems.length;
+            updateSlider();
+        }, 5000); // Change slide every 5 seconds
+
+        // Pause auto-slide on hover
+        sliderWrapper.parentElement.addEventListener('mouseenter', () => {
+            clearInterval(autoSlideInterval);
+        });
+
+        // Resume auto-slide on mouse leave
+        sliderWrapper.parentElement.addEventListener('mouseleave', () => {
+            autoSlideInterval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % sliderItems.length;
+                updateSlider();
+            }, 5000);
+        });
+    </script>
+
+</body>
+</html>
